@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPLINE_TRADERS - Stock Market Brokerage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            background-color: #333;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: inline-block;
+        }
+        nav ul li a:hover {
+            background-color: #575757;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content h2 {
+            color: #003366;
+        }
+        .chart-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .chart-container img {
+            width: 45%;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        footer {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Scrolling ticker style */
+        .stock-ticker {
+            background-color: #333;
+            color: white;
+            font-size: 18px;
+            padding: 10px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .stock-ticker span {
+            display: inline-block;
+            padding-right: 50px; /* Space between stock data */
+            animation: scroll-left 20s linear infinite;
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Current time and date style */
+        .current-time {
+            background-color: #003366;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        /* Contact info section */
+        #contact-info {
+            display: none;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Welcome to UPLINE_TRADERS</h1>
+    <p>Your trusted stock market brokerage partner</p>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Stock Charts</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#" onclick="showContactInfo(event)">Contact</a></li>
+    </ul>
+</nav>
+
+<!-- Current Time and Date Display -->
+<div id="current-time" class="current-time"></div>
+
+<div class="content">
+    <section>
+        <h2>Our Stock Market Brokerage Services</h2>
+        <p>At UPLINE_TRADERS, we provide comprehensive stock market brokerage services. We cater to individual investors and corporate clients, offering a range of investment solutions, from stock trading to investment advice.</p>
+    </section>
+
+    <section>
+        <h2>Stock Market Charts</h2>
+        <p>Below are some of the latest stock market charts to help you make informed decisions:</p>
+
+        <div class="chart-container">
+            <!-- Example chart images (replace with actual stock charts) -->
+            <img src="https://via.placeholder.com/400x300?text=Stock+Chart+1" alt="Stock Chart 1">
+            <img src="https://via.placeholder.com/400x300?text=Stock+Chart+2" alt="Stock Chart 2">
+        </div>
+    </section>
+</div>
+
+<!-- Contact Info Section -->
+<div id="contact-info">
+    <h3>Contact Information</h3>
+    <p><strong>Name:</strong> K. Agilan</p>
+    <p><strong>Position:</strong> RTL Design Engineer</p>
+    <p><strong>Company:</strong> JeanUVS Pvt. Ltd.</p>
+     <p><strong>Address:</strong> Guindy chennai.</p>
+</div>
+
+<!-- Stock Price Ticker -->
+<div class="stock-ticker">
+    <span id="ticker-data">Loading stock prices...</span>
+</div>
+
+<footer>
+    <p>Copyright © 2024 UPLINE_TRADERS. All rights reserved.</p>
+</footer>
+
+<!-- JavaScript to simulate stock price updates, current time, and show contact info -->
+<script>
+    // Alpha Vantage API key (replace with your actual key)
+    const apiKey = 'YOUR_ALPHA_VANTAGE_API_KEY';
+
+    // Function to fetch stock data
+    async function fetchStockPrices() {
+        try {
+            // Example of API URL for Nifty 50, Bank Nifty, Fin Nifty (you need actual symbols or indices from your provider)
+            const niftyUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=NIFTY&interval=5min&apikey=${apiKey}`;
+            const bankNiftyUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=BANKNIFTY&interval=5min&apikey=${apiKey}`;
+            const finNiftyUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=FINNIFTY&interval=5min&apikey=${apiKey}`;
+
+            const [niftyResponse, bankNiftyResponse, finNiftyResponse] = await Promise.all([
+                fetch(niftyUrl),
+                fetch(bankNiftyUrl),
+                fetch(finNiftyUrl)
+            ]);
+
+            const niftyData = await niftyResponse.json();
+            const bankNiftyData = await bankNiftyResponse.json();
+            const finNiftyData = await finNiftyResponse.json();
+
+            const niftyPrice = niftyData['Time Series (5min)'] ? niftyData['Time Series (5min)'][Object.keys(niftyData['Time Series (5min)'])[0]]['4. close'] : 'N/A';
+            const bankNiftyPrice = bankNiftyData['Time Series (5min)'] ? bankNiftyData['Time Series (5min)'][Object.keys(bankNiftyData['Time Series (5min)'])[0]]['4. close'] : 'N/A';
+            const finNiftyPrice = finNiftyData['Time Series (5min)'] ? finNiftyData['Time Series (5min)'][Object.keys(finNiftyData['Time Series (5min)'])[0]]['4. close'] : 'N/A';
+
+            // Update the ticker with fetched data
+            document.getElementById('ticker-data').innerHTML = `Nifty 50: ${niftyPrice} | Bank Nifty: ${bankNiftyPrice} | Fin Nifty: ${finNiftyPrice}`;
+        } catch (error) {
+            console.error('Error fetching stock data:', error);
+            document.getElementById('ticker-data').innerHTML = 'Error loading stock data';
+        }
+    }
+
+    // Fetch stock prices every 5 seconds
+    setInterval(fetchStockPrices, 5000);
+
+    // Update current time and date
+    function updateTime() {
+        const currentTimeElement = document.getElementById('current-time');
+
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        const date = now.toLocaleDateString(); // Format: MM/DD/YYYY
+
+        const currentTimeString = `${date} - ${hours}:${minutes}:${seconds}`;
+        currentTimeElement.innerHTML = currentTimeString;
+    }
+
+    // Update time every second
+    setInterval(updateTime, 1000);
+
+    // Initialize with current time
+    updateTime();
+
+    // Show contact information when "Contact" is clicked
+    function showContactInfo(event) {
+        event.preventDefault(); // Prevent default link behavior
+        const contactInfo = document.getElementById('contact-info');
+        contactInfo.style.display = contactInfo.style.display === 'block' ? 'none' : 'block';
+    }
+</script>
+
+</body>
+</html>
